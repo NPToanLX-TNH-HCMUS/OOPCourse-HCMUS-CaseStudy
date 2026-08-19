@@ -4,7 +4,6 @@
 #include <string>
 #include <vector>
 #include <stdexcept>
-#include <memory>
 #include <utility>
 
 class TravelPackageBuilder;

@@ -1,9 +1,10 @@
 # FlySmart International Travel Platform
 
-### Requirement 8. UML Class Diagram
+## Deliverables for Case 2
+### 8. UML Class Diagram
 > [!NOTE]
 The UML class diagram is provided in [`Mermaid.md`](Mermaid.md)
-### Requirement 9, 10. C++ Implementation and Demonstration with three Package Examples
+### 9, 10. C++ Implementation and Demonstration with three Package Examples
 
 > [!NOTE]
 The implementation is written in C++ in [`FlySmart.hpp`](FlySmart.hpp), and the demo program with 3 Package Examples is in [`main.cpp`](main.cpp).
