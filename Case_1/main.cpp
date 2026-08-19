@@ -3,28 +3,17 @@
 
 int main()
 {
-    TravelPackageBuilder builder;
+    TravelPackageBuilder Travel_Package;
+    Director dir(Travel_Package);
     try
     {
-        auto honeymoon = builder.from("Ho Chi Minh City")
-                             .to("Paris")
-                             .setFlightClass("Business")
-                             .setHotel("Grand Hotel")
-                             .setNights(5)
-                             .addAirportPickup()
-                             .addTravelInsurance()
-                             .addPrivateTour()
-                             .build();
-        auto businessTrip = builder
-                                .from("Ho Chi Minh City")
-                                .to("Singapore")
-                                .setFlightClass("Economy")
-                                .setHotel("City Hotel")
-                                .setNights(2)
-                                .build();
+        auto Budget_Traveler = dir.buildBudgetTravelerPackage("Ho Chi Minh", "Ha Noi");
+        auto Business_Traveler = dir.buildBusinessTravelerPackage("Ho Chi Minh", "Ha Noi");
+        auto Luxury_Traveler = dir.buildLuxuryTravelerPackage("Ho Chi Minh", "Ha Noi");
 
-        honeymoon.printDetails();
-        businessTrip.printDetails();
+        Budget_Traveler.printDetails();
+        Business_Traveler.printDetails();
+        Luxury_Traveler.printDetails();
     }
     catch (std::exception &e)
     {

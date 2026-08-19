@@ -12,7 +12,7 @@ class TravelPackageBuilder;
 class Package
 {
 private:
-    friend class TravelPackageBuilder;
+    friend class Builder;
 
 protected:
     // Required parameters
@@ -25,23 +25,25 @@ protected:
     int nights = 0;
     int checkedBags = 0;
     std::string seat = "Unassigned";
+    std::string meals = "None";
 
     // Boolean flags
-    bool meals = false;
     bool airportPickup = false;
     bool travelInsurance = false;
     bool cityTransport = false;
-    bool privateTour = false;
+    bool localTour = false;
 
 public:
     Package() = default;
     virtual ~Package() = default;
+
     void printDetails() const
     {
         std::cout << "--- Travel Package: " << departure << " to " << destination << " ---\n"
                   << "Flight Class: " << flightClass << "\n"
                   << "Seat: " << seat << "\n"
-                  << "Checked Bags: " << checkedBags << "\n";
+                  << "Checked Bags: " << checkedBags << "\n"
+                  << "Meals: " << meals << "\n";
 
         if (!hotel.empty())
         {
@@ -50,11 +52,6 @@ public:
 
         std::cout << "Add-ons: ";
         bool hasAddons = false;
-        if (meals)
-        {
-            std::cout << "[Meals] ";
-            hasAddons = true;
-        }
         if (airportPickup)
         {
             std::cout << "[Airport Pickup] ";
@@ -70,12 +67,11 @@ public:
             std::cout << "[City Transport] ";
             hasAddons = true;
         }
-        if (privateTour)
+        if (localTour)
         {
-            std::cout << "[Private Tour] ";
+            std::cout << "[Local Tour] ";
             hasAddons = true;
         }
-
         if (!hasAddons)
             std::cout << "None";
         std::cout << "\n\n";
@@ -86,77 +82,89 @@ class TravelPackage : public Package
 {
 };
 
-class TravelPackageBuilder
+class Builder
 {
-private:
+protected:
     TravelPackage trip;
 
 public:
-    TravelPackageBuilder &from(std::string dep)
+    virtual ~Builder() = default;
+
+    void reset()
+    {
+        trip = TravelPackage();
+    }
+
+    Builder &from(std::string dep)
     {
         trip.departure = std::move(dep);
         return *this;
     }
 
-    TravelPackageBuilder &to(std::string dest)
+    Builder &to(std::string dest)
     {
         trip.destination = std::move(dest);
         return *this;
     }
 
-    TravelPackageBuilder &setFlightClass(std::string fClass)
+    Builder &setFlightClass(std::string fClass)
     {
         trip.flightClass = std::move(fClass);
         return *this;
     }
 
-    TravelPackageBuilder &setHotel(std::string hotelName)
+    Builder &setHotel(std::string hotelName)
     {
         trip.hotel = std::move(hotelName);
+        trip.nights = 1;
         return *this;
     }
 
-    TravelPackageBuilder &setNights(int n)
+    Builder &setNights(int n)
     {
         trip.nights = n;
         return *this;
     }
 
-    TravelPackageBuilder &setCheckedBags(int bags)
+    Builder &setCheckedBags(int bags)
     {
         trip.checkedBags = bags;
         return *this;
     }
 
-    TravelPackageBuilder &setSeat(std::string seatPref)
+    Builder &setSeat(std::string seatPref)
     {
         trip.seat = std::move(seatPref);
         return *this;
     }
 
-    TravelPackageBuilder &addMeals()
+    Builder &setMeals(std::string meal)
     {
-        trip.meals = true;
+        trip.meals = std::move(meal);
         return *this;
     }
-    TravelPackageBuilder &addAirportPickup()
+
+    Builder &addAirportPickup()
     {
         trip.airportPickup = true;
         return *this;
     }
-    TravelPackageBuilder &addTravelInsurance()
+
+    Builder &addTravelInsurance()
     {
         trip.travelInsurance = true;
         return *this;
     }
-    TravelPackageBuilder &addCityTransport()
+
+    Builder &addCityTransport()
     {
         trip.cityTransport = true;
         return *this;
     }
-    TravelPackageBuilder &addPrivateTour()
+
+    Builder &addLocalTour()
     {
-        trip.privateTour = true;
+        trip.localTour = true;
         return *this;
     }
 
@@ -184,12 +192,59 @@ public:
         }
         if (trip.airportPickup && (trip.flightClass != "Business" && trip.flightClass != "First Class"))
         {
-            throw std::invalid_argument("Error: Airport limousine is only available for Business or First Class.");
+            throw std::invalid_argument("Error: Private airport limousine is only available for Business or First Class.");
         }
 
         TravelPackage result = std::move(trip);
-        trip = TravelPackage();
-        
+        reset();
         return result;
+    }
+};
+
+class TravelPackageBuilder : public Builder
+{
+};
+
+class Director
+{
+private:
+    Builder &builder;
+
+public:
+    explicit Director(Builder &builder) : builder(builder) {}
+
+    TravelPackage buildBudgetTravelerPackage(std::string departure, std::string destination)
+    {
+        builder.reset();
+        return builder.from(std::move(departure))
+            .to(std::move(destination))
+            .setFlightClass("Economy")
+            .setCheckedBags(1)
+            .setHotel("Standard Hotel")
+            .build();
+    }
+
+    TravelPackage buildBusinessTravelerPackage(std::string departure, std::string destination)
+    {
+        builder.reset();
+        return builder.from(std::move(departure))
+            .to(std::move(destination))
+            .setFlightClass("Business")
+            .addAirportPickup()
+            .addTravelInsurance()
+            .build();
+    }
+
+    TravelPackage buildLuxuryTravelerPackage(std::string departure, std::string destination)
+    {
+        builder.reset();
+        return builder.from(std::move(departure))
+            .to(std::move(destination))
+            .setFlightClass("First Class")
+            .setHotel("Five-star Hotel")
+            .addTravelInsurance()
+            .addLocalTour()
+            .setMeals("Premium")
+            .build();
     }
 };
