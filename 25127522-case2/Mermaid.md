@@ -1,43 +1,42 @@
-# Case 2 UML Class Diagram
 
 ```mermaid
 classDiagram
     class TradingStrategy {
         <<interface>>
-        +analyze(price: double) Decision
+        +analyze(price)
     }
 
     class ConservativeStrategy {
-        -history: vector~double~
+        -history: PriceHistory
         -windowSize: size_t
         -buyDiscount: double
-        +analyze(price: double) Decision
+        +analyze(price)
     }
 
     class MomentumStrategy {
-        -history: vector~double~
+        -history: PriceHistory
         -requiredMoves: size_t
-        +analyze(price: double) Decision
+        +analyze(price)
     }
 
     class ThresholdStrategy {
         -buyBelow: double
         -sellAbove: double
-        +analyze(price: double) Decision
+        +analyze(price)
     }
 
     class GoldTradingBot {
-        -strategy: unique_ptr~TradingStrategy~
+        -strategy: StrategyPtr
         +GoldTradingBot(strategy)
         +setStrategy(strategy)
-        +analyze(price: double) Decision
+        +analyze(price)
     }
 
     class StrategyRegistry {
-        -registry: unordered_map~string, Creator~
+        -registry: CreatorMap
         +registerStrategy(name, creator)
-        +create(name) unique_ptr~TradingStrategy~
-        +contains(name) bool
+        +create(name)
+        +contains(name)
         +remove(name)
     }
 

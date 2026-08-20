@@ -1,6 +1,6 @@
 # FlySmart International Travel Platform
 
-## Deliverables for Case 2
+## Deliverables for Case 1
 ### 8. UML Class Diagram
 > [!NOTE]
 The UML class diagram is provided in [`Mermaid.md`](Mermaid.md)
