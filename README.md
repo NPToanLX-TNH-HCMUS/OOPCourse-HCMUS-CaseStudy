@@ -1,7 +1,7 @@
 # OOP Design Patterns Case Studies
 ---
 
-## Introduce
+## Introduction
 
 **Course**: Object-Oriented Programming
 **Instructor:** Mr. Nguyen Trong Thuan  
